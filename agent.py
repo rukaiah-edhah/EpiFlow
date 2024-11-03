@@ -13,10 +13,14 @@ class Agent:
         dx, dy = random.choice([-1,0,1]), random.choice([-1,0,1])
         newX = max(0, min(self.pos[0]+dx, gridSize - 1))
         newY = max(0, min(self.pos[1]+dy, gridSize - 1))
-        self.pos = (newX + newY)
+        self.pos = (newX, newY)
 
     def infect(self):
         # changes status to infeceted.
         if self.status == "susceptible":
             self.status = "infected"
+    
+    def recover(self):
+        if self.status == "infected":
+            self.status = "recovered"
     
