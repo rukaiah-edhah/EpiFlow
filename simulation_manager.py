@@ -1,0 +1,36 @@
+import random
+from agent import Agent
+
+class SimulationManager:
+    def __init__(self, num_agents, grid_size):
+        self.agents = []
+        for _ in range(num_agents):
+            x = random.randint(0, grid_size - 1)
+            y = random.randint(0, grid_size - 1)
+            self.agents.append(Agent(x, y))
+        self.grid_size = grid_size
+        self.time_step = 0
+    
+    def update_status(self):
+        for agent in self.agents:
+            agent.move(self.grid_size)
+            if agent.status == "infected":
+                self.handle_collision(agent)  
+                self.handle_infection_and_recovery(agent)  
+
+    def handle_collision(self, agent):
+        # Placeholder for collision logic 
+        pass
+
+    def handle_infection_and_recovery(self, agent):
+        # Placeholder for infection and recovery logic
+        pass
+
+    def is_near(self, agent1, agent2):
+        distance = ((agent1.pos[0] - agent2.pos[0])**2 + (agent1.pos[1] - agent2.pos[1])**2)**0.5
+        return distance <= 1
+
+    def run_simulation(self, steps):
+        for _ in range(steps):
+            self.time_step += 1
+            self.update_status()
