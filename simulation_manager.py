@@ -18,9 +18,13 @@ class SimulationManager:
                 self.handle_collision(agent)  
                 self.handle_infection_and_recovery(agent)  
 
-    def handle_collision(self, agent):
-        # Placeholder for collision logic 
-        pass
+    def handle_collision(self, infected_agent):
+        for other_agent in self.agents:
+            if other_agent != infected_agent and other_agent.status == "susceptible":
+                distance = ((infected_agent.pos[0] - other_agent.pos[0]) ** 2 + 
+                            (infected_agent.pos[1] - other_agent.pos[1]) ** 2) ** 0.5
+                if distance <= 1:  
+                    other_agent.infect()  
 
     def handle_infection_and_recovery(self, agent):
         # Placeholder for infection and recovery logic
