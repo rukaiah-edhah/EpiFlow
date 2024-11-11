@@ -28,7 +28,12 @@ class SimulationManager:
 
     def handle_recovery(self, agent):
         # Handle recovery only since infection is handled by handle_collision
-        pass
+        # If the agent is infected and the random chance threshold is met, the agent recovers.
+        if agent.infected and not agent.recovered:
+            if random.random() < self.recovery_chance:
+                agent.infected = False
+                agent.recovered = True
+                print(f"Agent at ({agent.x}, {agent.y}) has recovered.")
 
     def is_near(self, agent1, agent2):
         distance = (agent1.pos[0] - agent2.pos[0]) ** 2 + (agent1.pos[1] - agent2.pos[1]) ** 2
