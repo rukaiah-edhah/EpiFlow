@@ -21,17 +21,17 @@ class SimulationManager:
     def handle_collision(self, infected_agent):
         for other_agent in self.agents:
             if other_agent != infected_agent and other_agent.status == "susceptible":
-                distance = ((infected_agent.pos[0] - other_agent.pos[0]) ** 2 + 
-                            (infected_agent.pos[1] - other_agent.pos[1]) ** 2) ** 0.5
+                distance = (infected_agent.pos[0] - other_agent.pos[0]) ** 2 + \
+                               (infected_agent.pos[1] - other_agent.pos[1]) ** 2
                 if distance <= 1:  
                     other_agent.infect()  
 
-    def handle_infection_and_recovery(self, agent):
-        # Placeholder for infection and recovery logic
+    def handle_recovery(self, agent):
+        # Handle recovery only since infection is handled by handle_collision
         pass
 
     def is_near(self, agent1, agent2):
-        distance = ((agent1.pos[0] - agent2.pos[0])**2 + (agent1.pos[1] - agent2.pos[1])**2)**0.5
+        distance = (agent1.pos[0] - agent2.pos[0]) ** 2 + (agent1.pos[1] - agent2.pos[1]) ** 2
         return distance <= 1
 
     def run_simulation(self, steps):
