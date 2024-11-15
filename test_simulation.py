@@ -12,9 +12,11 @@ for agent in sim_manager.agents:
 
 sim_manager.update_status()
 
-print("\nAgent positions after one update:")
+print("\nAgent positions and statuses after one update:")
 for agent in sim_manager.agents:
     print(f"Position: {agent.pos}, Status: {agent.status}")
+    if agent.status == "recovered":
+        print(f"Agent at {agent.pos} has recovered.")
 
 agent1 = sim_manager.agents[0]
 agent2 = sim_manager.agents[1]
