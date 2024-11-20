@@ -1,7 +1,12 @@
+import pygame
+
+pygame.init()
+
 #Screen dimensions
 WIDTH, HEIGHT = 2000, 1000
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Virus Simulation Game")
+
 background_image = pygame.image.load(r"C:\Users\ecarl\Downloads\istockphoto-1364253812-640x640.jpg")
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
@@ -26,14 +31,13 @@ healthy_images = [
 ]
 
 healthy_images = [
-    pygame.transform.scale(image, (2 * agent_radius, 2 * agent_radius))
+    pygame.transform.scale(image, (20, 20)) # adjust the agent radius to preferred size (20x20 is just a example size)
     for image in healthy_images
 ]
 
-#Draw health bar
-        pygame.draw.rect(surface, RED, (self.x - 15, self.y - 30, 30, 5))  # Red background
-        pygame.draw.rect(surface, GREEN, (self.x - 15, self.y - 30, 30 * (self.health / 100), 5))  # Green health bar
-        surface.blit(self.image, (self.x - agent_radius, self.y - agent_radius))
+# fonts for text rendering
+font = pygame.font.Font(None, 75)
+small_font = pygame.font.Font(None,36)
 
 def main_menu():
     """Display the main menu."""
@@ -58,52 +62,27 @@ def feedback(message):
     feedback_text = small_font.render(message, True, YELLOW)
     screen.blit(feedback_text, (10, 10))
 
-  #Main loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+def render_agents(agents):
+    """Render agents"""
+    for agent in agents:
+        if agent.status == "infected":
+            pygame.draw.circle(screen,RED, (agent.pos[0] * 10, agent.pos[1] * 10, 5))
+        elif agent.status == "recovered":
+            pygame.draw.circle(screen,GREEN, (agent.pos[0] * 10, agent.pos[1] * 10, 5))
+        else:
+            image = healthy_images[0]
+            screen.blit(image, (agent.pos[0] * 10, agent.pos[1] * 10))
 
-        #Handle keypresses
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                setup_simulation()
-                RUNNING = True
-                PAUSED = False
-            elif event.key == pygame.K_s:
-                RUNNING = True
-                PAUSED = False
-            elif event.key == pygame.K_p:
-                PAUSED = not PAUSED
-            elif event.key == pygame.K_q:
-                running = False
+#Draw health bar
+def draw_health_bar(agent):
+    """draw health bar above agent"""
+    pygame.draw.rect(screen, RED, (agent.x - 15, agent.y - 30, 30, 5))  # Red background
+    pygame.draw.rect(screen, GREEN, (agent.x - 15, agent.y - 30, 30 * (agent.health / 100), 5))  # Green health bar
 
-    #Display main menu if not running
-    if not RUNNING:
-        main_menu()
-        continue
-
-    #Run simulation if not paused
-    if not PAUSED:
-        screen.blit(background_image, (0, 0))
-
-        #Update and draw agents
-        for agent in agents:
-            agent.move()
-            agent.draw(screen)
-
-        #feedback message
-        feedback(f"Simulation Running: {len([a for a in agents if a.infected])} Infected")
-
-    else:
-        feedback("Simulation Paused")
-
-    #Display controls
-    controls()
-
-    #Update the display
-    pygame.display.flip()
-
-
-        
+def render_simulation(agents):
+    """Render simulation"""
+    screen.fill(WHITE)
+    render_agents(agents) # renders agents base on status.
+    for agent in agents:
+        draw_health_bar(agent) # draws health bar above each agent.
+        pygame.display.flip()
