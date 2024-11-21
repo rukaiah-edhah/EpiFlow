@@ -12,6 +12,9 @@ num_agents = 100
 grid_size = 50
 sim_manager = SimulationManager(num_agents, grid_size)
 
+RUNNING = False
+PAUSED = False
+
 def controls():
     """display controls"""
     control_text = small_font.render("Controls: [S] Start  [P] Pause  [Q] Quit", True, WHITE)
