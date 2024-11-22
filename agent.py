@@ -14,7 +14,7 @@ class Agent:
     
     def move(self, gridSize):
         # move the agent to a random position within the grid
-        dx, dy = random.choice([-1,0,1]), random.choice([-1,0,1])
+        dx, dy = random.uniform(-1.2, 1.2), random.uniform(-1.2, 1.2)
         newX = max(0, min(self.pos[0]+dx, gridSize - 1))
         newY = max(0, min(self.pos[1]+dy, gridSize - 1))
         self.pos = (newX, newY)
