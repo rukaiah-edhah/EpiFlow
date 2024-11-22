@@ -8,7 +8,7 @@ class SimulationManager:
             x = random.randint(0, grid_size - 1)
             y = random.randint(0, grid_size - 1)
             image = random.choice(images)
-            self.agents.append(Agent(x, y, images))
+            self.agents.append(Agent(x, y, image))
         self.grid_size = grid_size
         self.time_step = 0
     
@@ -24,13 +24,13 @@ class SimulationManager:
         for other_agent in self.agents:
             if other_agent != infected_agent and other_agent.status == "susceptible":
                 if self.is_near(infected_agent, other_agent):
-                    if random.random() < 0.7:
+                    if random.random() < 0.9:
                         other_agent.infect()
 
 
     def handle_recovery(self, agent):
         if agent.status == "infected":
-            if random.random() < 0.2:  
+            if random.random() < 0.1:  
                 agent.recover()
 
     def is_near(self, agent1, agent2):

@@ -1,6 +1,7 @@
 import os
 import pygame
 import random
+from simulation_manager import SimulationManager
 
 # Initialize Pygame
 pygame.init()
@@ -18,70 +19,50 @@ if not os.path.exists(ASSETS_DIR):
     print(f"Error: Assets directory not found at {ASSETS_DIR}")
     exit()
 
-# Define the path to the background image
+# Load background image
 background_image_path = os.path.join(ASSETS_DIR, "EpiFlow_Background.jpg")
-
-# Check if the file exists
-if not os.path.isfile(background_image_path):
-    print(f"Error: File not found at {background_image_path}")
-    exit()
-
-# Load the background image
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
 # Load and scale agent images
 healthy_images = [
     pygame.image.load(os.path.join(ASSETS_DIR, f"Untitled_Artwork_{i}.png"))
-    for i in range(8)  # Assumes images are named sequentially
+    for i in range(8)
 ]
-
-agent_radius = 40
-
+agent_radius = 20
 healthy_images = [
     pygame.transform.scale(image, (2 * agent_radius, 2 * agent_radius))
     for image in healthy_images
 ]
 
+# Colors
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+ORANGE = (255, 165, 0)
+
 # Game loop variables
 RUNNING = False
 PAUSED = False
-
-# Agent class for visuals
-class Agent:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.dx = random.choice([-2, -1, 1, 2])
-        self.dy = random.choice([-2, -1, 1, 2])
-        self.image = random.choice(healthy_images)
-
-    def move(self):
-        self.x += self.dx
-        self.y += self.dy
-
-        # Bounce off walls
-        if self.x - agent_radius < 0 or self.x + agent_radius > WIDTH:
-            self.dx *= -1
-        if self.y - agent_radius < 0 or self.y + agent_radius > HEIGHT:
-            self.dy *= -1
-
-    def draw(self, surface):
-        surface.blit(self.image, (self.x - agent_radius, self.y - agent_radius))
+speed = 1  # Default speed
 
 # Main game loop
 running = True
-agents = []
+simulation = None
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                # Initialize agents for the simulation
-                agents = [Agent(random.randint(40, WIDTH - 40), random.randint(40, HEIGHT - 40)) for _ in range(80)]
+                num_agents = 120
+                grid_size = 100
+                simulation = SimulationManager(num_agents, grid_size, healthy_images)
+                num_infected = max(1, num_agents // 10)  
+                initial_infected_agents = random.sample(simulation.agents, num_infected)
+                for agent in initial_infected_agents:
+                    agent.infect()
+                
                 RUNNING = True
                 PAUSED = False
             elif event.key == pygame.K_p:
@@ -89,17 +70,32 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    # Display background and agents if running
-    if RUNNING and not PAUSED:
+    if RUNNING and not PAUSED and simulation:
         screen.blit(background_image, (0, 0))
-        for agent in agents:
-            agent.move()
-            agent.draw(screen)
+        simulation.update_status()
 
-    # Update the display
+        for agent in simulation.agents:
+            x, y = agent.pos[0] * 20, agent.pos[1] * 10
+            screen.blit(agent.image, (x - agent_radius, y - agent_radius))
+
+            if agent.status == "infected":
+                status_color = RED
+            elif agent.status == "recovered":
+                status_color = GREEN
+            else:
+                status_color = ORANGE
+
+            pygame.draw.circle(screen, status_color, (x, y), agent_radius + 2, 2)
+
+            # Health bar
+            health_bar_length = 30
+            health_bar_height = 5
+            health_bar_x = x - health_bar_length // 2
+            health_bar_y = y - agent_radius - 10
+            pygame.draw.rect(screen, RED, (health_bar_x, health_bar_y, health_bar_length, health_bar_height))
+            pygame.draw.rect(screen, GREEN, (health_bar_x, health_bar_y, int(health_bar_length * agent.health / 100), health_bar_height))
+
     pygame.display.flip()
-
-    # Cap the frame rate
-    pygame.time.Clock().tick(60)
+    pygame.time.Clock().tick(30 * speed)
 
 pygame.quit()
