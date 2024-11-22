@@ -11,6 +11,11 @@ WIDTH, HEIGHT = 2000, 1000
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Virus Simulation Game")
 
+# Font for instructions
+font = pygame.font.Font(None, 36)  
+instruction_text = font.render("Press SPACE to run the simulation and Q to quit", True, (255, 255, 255))  
+text_rect = instruction_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
 # Assets directory
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "Assets")
 
@@ -69,6 +74,8 @@ while running:
                 PAUSED = not PAUSED
             elif event.key == pygame.K_q:
                 running = False
+            
+    screen.blit(instruction_text, text_rect)
 
     if RUNNING and not PAUSED and simulation:
         screen.blit(background_image, (0, 0))
