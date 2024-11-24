@@ -16,6 +16,8 @@ font = pygame.font.Font(None, 36)
 instruction_text = font.render("Press SPACE to run the simulation and Q to quit", True, (255, 255, 255))  
 text_rect = instruction_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 
+stats_font = pygame.font.Font(None, 20)
+
 # Assets directory
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "Assets")
 
@@ -102,13 +104,12 @@ while running:
             pygame.draw.rect(screen, RED, (health_bar_x, health_bar_y, health_bar_length, health_bar_height))
             pygame.draw.rect(screen, GREEN, (health_bar_x, health_bar_y, int(health_bar_length * agent.health / 100), health_bar_height))
 
-
-            susceptible, infected, recovered = simulation.get_statistics()
-            stats_text = f"Susceptible: {susceptible}  Infected: {infected}  Recovered: {recovered}"
-            stats_surface = stats_font.render(stats_text, True, (255, 255, 255))
-            stats_rect = stats_surface.get_rect(topright=(WIDTH - 20, 20))  
-            screen.blit(stats_surface, stats_rect) 
-
+        # Fetch statistics and render them
+        susceptible, infected, recovered = simulation.get_statistics()
+        stats_text = f"Susceptible: {susceptible}  Infected: {infected}  Recovered: {recovered}"
+        stats_surface = stats_font.render(stats_text, True, (255, 255, 255))
+        stats_rect = stats_surface.get_rect(topright=(WIDTH - 20, 20))  
+        screen.blit(stats_surface, stats_rect)
 
     pygame.display.flip()
     pygame.time.Clock().tick(30 * speed)
