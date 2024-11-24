@@ -41,3 +41,9 @@ class SimulationManager:
         for _ in range(steps):
             self.time_step += 1
             self.update_status()
+
+    def get_statistics(self):
+        susceptible = sum(1 for agent in self.agents if agent.status == "susceptible")
+        infected = sum(1 for agent in self.agents if agent.status == "infected")
+        recovered = sum(1 for agent in self.agents if agent.status == "recovered")
+        return susceptible, infected, recovered
