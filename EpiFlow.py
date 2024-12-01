@@ -1,4 +1,5 @@
 import os
+import sys
 import pygame
 import random
 from simulation_manager import SimulationManager
@@ -18,24 +19,30 @@ text_rect = instruction_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 
 stats_font = pygame.font.Font(None, 20)
 
-# Assets directory
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), "Assets")
+# Handle paths for PyInstaller
+if getattr(sys, 'frozen', False):  
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(__file__)
 
-# Verify Assets directory exists
-if not os.path.exists(ASSETS_DIR):
-    print(f"Error: Assets directory not found at {ASSETS_DIR}")
-    exit()
+ASSETS_DIR = os.path.join(base_path, "Assets")
 
-# Load background image
+# Load and scale background image
 background_image_path = os.path.join(ASSETS_DIR, "EpiFlow_Background.jpg")
 background_image = pygame.image.load(background_image_path)
-background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+background_image = pygame.transform.scale(background_image, (2000, 1000)) 
 
 # Load and scale agent images
+agent_radius = 20  
 healthy_images = [
     pygame.image.load(os.path.join(ASSETS_DIR, f"Untitled_Artwork_{i}.png"))
     for i in range(8)
 ]
+healthy_images = [
+    pygame.transform.scale(image, (2 * agent_radius, 2 * agent_radius))
+    for image in healthy_images
+]
+
 agent_radius = 20
 healthy_images = [
     pygame.transform.scale(image, (2 * agent_radius, 2 * agent_radius))
